@@ -1,0 +1,7 @@
+John,active
+David,inactive
+Sashi,active
+Robert,inactive
+Michael,active
+ Vardhan, active
+ Vardhan Reddy, inactive
