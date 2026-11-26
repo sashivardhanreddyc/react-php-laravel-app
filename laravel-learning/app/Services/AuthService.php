@@ -34,12 +34,14 @@ class AuthService
 
         // Create user in database.
         $user = $this->authRepository->createUser([
-            'name' => $data['name'],
+            'firstname' => $data['firstname'],
+            'lastname' => $data['lastname'],
+            'username' => $data['username'],
             'email' => $data['email'],
             'password' => $data['password'],
             'status' => 'active',
         ]);
-
+        
         // Generate JWT token.
         $token = auth('api')->login($user);
 
@@ -56,8 +58,8 @@ class AuthService
     public function login(array $credentials): array
     {
         // Find user by email.
-        $user = $this->authRepository->findByEmail(
-            $credentials['email']
+        $user = $this->authRepository->findByLogin(
+            $credentials['username']
         );
 
         // Check user and password.
@@ -65,16 +67,16 @@ class AuthService
             $credentials['password'],
             $user->password
         )) {
-            throw ValidationException::withMessages([
-                'email' => ['Invalid email or password.'],
-            ]);
+            throw new AuthenticationException(
+                'Invalid email/username or password.'
+            );
         }
 
         // Check account status.
         if ($user->status !== 'active') {
-            throw ValidationException::withMessages([
-                'email' => ['Your account is inactive.'],
-            ]);
+             throw new AuthorizationException(
+                'Your account is inactive.'
+            );
         }
 
         // Generate JWT token.
