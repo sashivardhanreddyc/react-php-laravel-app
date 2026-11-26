@@ -1,8 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployeeController;
+
+//Public Authentication APIs
+Route::post('/register', [AuthController::class, 'register'])
+->name('auth.register');
+Route::post('/login', [AuthController::class, 'login'])
+->name('auth.login');
+
+// Protected authentication APIs
+Route::middleware('auth:api')
+    ->prefix('auth')
+    ->group(function () {
+
+        Route::get('/me', [AuthController::class, 'me'])
+            ->name('auth.me');
+
+        Route::post('/logout', [AuthController::class, 'logout'])
+            ->name('auth.logout');
+
+    });
 
 Route::middleware(['auth:api', 'check.user.status'])->group(function(){
     Route::get('/users', [UserController::class, 'index']);

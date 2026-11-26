@@ -9,7 +9,23 @@ class AuthRepository
      */
     public function createUser(array $data): User
     {
-        return User::create($data);
+       return User::create([
+            'firstname' => $data['firstname'],
+            'lastname' => $data['lastname'],
+            'username' => $data['username'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+        ]);
+    }
+
+    /**
+     * Find a user using email or username.
+     */
+    public function findByLogin(string $login): ?User
+    {
+        return User::where('email', $login)
+            ->orWhere('username', $login)
+            ->first();
     }
 
     /**
